@@ -1,0 +1,14 @@
+{
+  "service": {
+    "name": "frontend",
+    "address": "frontend",
+    "port": 5001,
+    "checks": [
+      {
+        "http": "http://frontend:5001/health",
+        "interval": "10s",
+        "timeout": "2s"
+      }
+    ]
+  }
+}

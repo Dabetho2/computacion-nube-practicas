@@ -1,0 +1,14 @@
+{
+  "service": {
+    "name": "orders",
+    "address": "orders",
+    "port": 5004,
+    "checks": [
+      {
+        "http": "http://orders:5004/api/orders/health",
+        "interval": "10s",
+        "timeout": "2s"
+      }
+    ]
+  }
+}

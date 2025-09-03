@@ -1,0 +1,14 @@
+{
+  "service": {
+    "name": "users",
+    "address": "users",
+    "port": 5002,
+    "checks": [
+      {
+        "http": "http://users:5002/api/users/health",
+        "interval": "10s",
+        "timeout": "2s"
+      }
+    ]
+  }
+}
