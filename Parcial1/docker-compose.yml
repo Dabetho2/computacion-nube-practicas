@@ -1,0 +1,84 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: myflaskapp
+    volumes:
+      - vagrant_db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    # NO exponemos 3306 al host para evitar choques
+
+  users:
+    build: ./microUsers
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: myflaskapp
+    depends_on:
+      db:
+        condition: service_healthy
+      consul:
+        condition: service_started
+    ports:
+      - "5002:5002"
+
+  products:
+    build: ./microProducts
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: myflaskapp
+    depends_on:
+      db:
+        condition: service_healthy
+      consul:
+        condition: service_started
+    ports:
+      - "5003:5003"
+
+  orders:
+    build: ./microOrders
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: myflaskapp
+      CONSUL_HTTP_ADDR: http://consul:8500
+    depends_on:
+      db:
+        condition: service_healthy
+      consul:
+        condition: service_started
+    ports:
+      - "5004:5004"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      consul:
+        condition: service_started
+    ports:
+      - "5001:5001"
+
+  consul:
+    image: hashicorp/consul:1.15
+    command: agent -server -bootstrap -ui -bind=0.0.0.0 -client=0.0.0.0
+    ports:
+      - "8500:8500"   # UI/API HTTP
+    volumes:
+      - consul-data:/consul/data
+      - ./consul.d:/consul/config
+
+volumes:
+  vagrant_db_data:
+  consul-data:

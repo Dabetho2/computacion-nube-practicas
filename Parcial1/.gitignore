@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+.DS_Store
+.vagrant/
+.cache/
+backups/
+*.tar.gz
+docker-compose.override.yml
+.env
