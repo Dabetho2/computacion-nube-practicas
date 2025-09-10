@@ -1,0 +1,17 @@
+# -*- mode: ruby -*-
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-22.04"
+  config.vm.hostname = "lxdVM"
+
+  # Red privada (cámbiala si ya usas 90.4)
+  config.vm.network :private_network, ip: "192.168.90.4"
+
+  # Recursos opcionales
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 2048
+    vb.cpus   = 2
+  end
+
+  # Aprovisionamiento con Shell
+  config.vm.provision "shell", path: "lxd.sh"
+end
